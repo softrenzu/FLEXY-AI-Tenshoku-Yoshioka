@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071121"/><stop offset="1" stop-color="#173b57"/></linearGradient><linearGradient id="accent"><stop stop-color="#6de3d5"/><stop offset="1" stop-color="#96bdff"/></linearGradient></defs>
+<rect width="1200" height="630" fill="url(#bg)"/><circle cx="1120" cy="80" r="330" fill="#205878" opacity=".25"/><circle cx="1050" cy="550" r="290" fill="#203e78" opacity=".22"/>
+<text x="78" y="91" fill="#7ee8dc" font-size="23" font-family="sans-serif" font-weight="bold" letter-spacing="3">FLEXY AI HACKATHON 2026</text>
+<text x="75" y="204" fill="#e7f5ff" font-size="42" font-family="sans-serif" font-weight="bold">転職の主導権を、あなたに。</text>
+<text x="75" y="312" fill="#f6fbff" font-size="77" font-family="sans-serif" font-weight="bold">面接されるのは、</text>
+<text x="75" y="413" fill="url(#accent)" font-size="98" font-family="sans-serif" font-weight="bold">会社のほうだ。</text>
+<text x="78" y="492" fill="#c1d5e8" font-size="31" font-family="sans-serif">AIが企業を逆面接。あなたに合う職場を見極める。</text>
+<rect x="78" y="532" width="290" height="54" rx="27" fill="#67ded3"/>
+<text x="112" y="569" fill="#092234" font-size="24" font-family="sans-serif" font-weight="bold">逆面接AI　／　DEMO</text>
+<text x="850" y="580" fill="#d5e6f5" font-size="21" font-family="sans-serif">by Yoshioka</text>
+</svg>
