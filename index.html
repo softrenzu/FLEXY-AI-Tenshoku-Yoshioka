@@ -1,9 +1,71 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>逆面接AI | FLEXY AI Hackathon</title><style>
-:root{font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;color:#e8efff;background:#0b1121}*{box-sizing:border-box}body{margin:0}main{max-width:1020px;margin:auto;padding:28px 20px 90px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-size:13px;letter-spacing:.13em;color:#7ad7dc}.pill{border:1px solid #47617b;border-radius:30px;padding:7px 13px;color:#bcd1ed;font-size:12px}.hero{padding:66px 0 34px}.eyebrow{color:#67d4db;font-size:13px;font-weight:700}h1{font-size:clamp(42px,8vw,78px);letter-spacing:-.06em;line-height:1.17;margin:15px 0}h1 span{color:#67d4db}.lead{font-size:19px;line-height:1.9;color:#bdcde4;max-width:680px}.panel{background:#151f35;border:1px solid #2b3b55;border-radius:20px;padding:26px;margin-top:24px}h2{font-size:23px;margin:0 0 18px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}label{display:block;color:#c9d6ea;font-size:13px;margin-bottom:8px}input,select{width:100%;border:1px solid #455772;border-radius:10px;padding:14px;background:#0d172a;color:#fff;font-size:16px}button{border:0;border-radius:11px;background:#6be0dc;color:#071729;padding:15px 26px;font-size:16px;font-weight:800;cursor:pointer;margin-top:22px}button:hover{background:#a2f1ed}.muted{color:#9daec6;font-size:13px;line-height:1.7}.hidden{display:none}.log{padding:14px 18px;border-left:3px solid #70d8dc;background:#101b30;margin:12px 0;border-radius:0 12px 12px 0;line-height:1.8}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:#101a2e;border:1px solid #33445e;border-radius:15px;padding:18px}.score{font-size:36px;color:#76e4dd;font-weight:800}.tag{display:inline-block;background:#203952;border-radius:6px;padding:4px 8px;font-size:12px;color:#aee8ea}.card p{font-size:14px;color:#c5d2e5;line-height:1.7}footer{margin-top:45px;color:#8499b8;font-size:12px}@media(max-width:700px){.grid,.cards{grid-template-columns:1fr}.hero{padding-top:45px}.panel{padding:20px}}
-</style></head><body><main><div class="top"><div class="brand">FLEXY AI HACKATHON 2026</div><div class="pill">YOSHIOKA PROTOTYPE</div></div><section class="hero"><div class="eyebrow">転職の主導権を、あなたに。</div><h1>面接されるのは、<br><span>会社のほうだ。</span></h1><p class="lead">あなたの代わりにAIが企業を逆面接。給与だけでなく、働き方・成長機会・職場のリアルまで問い直す。求人を探す転職から、企業を見極める転職へ。</p></section><section class="panel"><h2>あなたの希望を教えてください</h2><div class="grid"><div><label for="job">希望職種</label><select id="job"><option>AIエンジニア</option><option>プロジェクトマネージャー</option><option>法人営業</option><option>事業企画</option></select></div><div><label for="salary">希望年収（万円）</label><input id="salary" type="number" min="300" max="3000" value="800"></div><div><label for="style">希望する働き方</label><select id="style"><option>リモート重視</option><option>成長機会重視</option><option>ワークライフバランス重視</option></select></div></div><button id="run">AIに企業を逆面接させる →</button><p class="muted">※ ハッカソン用デモ。企業・回答はすべて架空です。実在企業への問い合わせは行いません。VercelでAPIキーを設定した場合のみAIが架空の対話を生成します。</p></section><section id="results" class="hidden" aria-live="polite"><div class="panel"><h2>AIエージェントの逆面接</h2><div id="logs"></div></div><div class="panel"><h2>企業比較レポート</h2><p class="muted">スコアはデモ用の簡易ルールに基づく例示であり、採用適性の客観的評価ではありません。</p><div class="cards" id="cards"></div></div></section><footer>逆面接AI — FLEXY AI Hackathon 2026 / Prototype by Yoshioka. 架空データによるコンセプト検証。</footer></main><script>
-const companies=[{name:"ネクストウェーブ株式会社",salary:950,remote:5,growth:4,balance:3,desc:"AI製品の新規開発。週4日リモート、裁量が大きい。",q:"チームの成長機会は？",a:"四半期ごとに技術投資枠を設け、社内異動も支援します。"},
-{name:"ミライリンク株式会社",salary:820,remote:3,growth:5,balance:4,desc:"DXプロジェクト推進。教育投資とメンター制度が充実。",q:"現場の働き方は？",a:"週2日リモート、繁忙期はありますが代休制度があります。"},
-{name:"バランスワークス株式会社",salary:760,remote:5,growth:3,balance:5,desc:"安定した事業基盤。フルリモート中心で柔軟な勤務。",q:"残業と評価の透明性は？",a:"残業は月10時間を目安とし、評価基準を公開しています。"}];
-document.getElementById("run").addEventListener("click",()=>{const salary=Number(document.getElementById("salary").value)||800;const style=document.getElementById("style").value;const job=document.getElementById("job").value;const weight=style.includes("リモート")?"remote":style.includes("成長")?"growth":"balance";const ranked=companies.map(c=>({...c,score:Math.max(35,Math.min(98,Math.round(45+c[weight]*8-Math.max(0,salary-c.salary)/30)))})).sort((a,b)=>b.score-a.score);document.getElementById("logs").innerHTML=ranked.map(c=>'<div class="log"><b>あなたのAI → '+c.name+'</b><br>「'+c.q+' 希望職種は'+job+'、希望年収は'+salary+'万円です。」<br><b>企業AI（模擬） →</b>「'+c.a+' 想定年収は'+c.salary+'万円です。」</div>').join("");document.getElementById("cards").innerHTML=ranked.map((c,i)=>'<article class="card"><span class="tag">'+(i===0?"最優先候補":"比較候補")+'</span><h3>'+c.name+'</h3><div class="score">'+c.score+'<small style="font-size:14px"> / 100</small></div><p>想定年収 '+c.salary+'万円</p><p>'+c.desc+'</p><p><b>AIの見立て：</b>'+(c.salary>=salary?"年収希望を満たします。":"年収希望には届きません。")+' '+(c[weight]>=4?"重視条件と相性が良い設定です。":"重視条件に確認余地があります。")+'</p></article>').join("");document.getElementById("results").classList.remove("hidden");document.getElementById("results").scrollIntoView({behavior:"smooth"});});
-</script><script src="./ai-enhancement.js" defer></script></body></html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#070d1b">
+<meta name="description" content="面接されるのは、会社のほうだ。逆面接AIは、AIが企業を逆面接し、求職者の希望に合う職場を比較する転職体験のプロトタイプです。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="逆面接AI — 面接されるのは、会社のほうだ。">
+<meta property="og:description" content="求職者の代わりにAIが企業を逆面接する新しい転職体験">
+<meta property="og:image" content="thumbnail.svg">
+<title>逆面接AI — FLEXY AI Hackathon 2026</title>
+<link rel="stylesheet" href="styles.css">
+<script defer src="app.js"></script>
+</head>
+<body>
+<div class="shell">
+<header class="nav">
+<div class="brand">FLEXY <span>AI</span> HACKATHON</div>
+<div class="nav-note">2026 / YOSHIOKA DEMO</div>
+</header>
+<main>
+<section class="hero" aria-labelledby="hero-title">
+<div>
+<div class="eyebrow"><span class="dot"></span> AIがあたりまえの時代、転職を再発明する</div>
+<h1 id="hero-title">面接されるのは、<br><em>会社のほうだ。</em></h1>
+<p>求人票を眺めて、履歴書を何度も書く。そんな一方通行の転職を変えよう。<strong>あなた専用のAIが企業を逆面接</strong>して、給与・働き方・成長機会を比較。あなたは、会いたい会社だけを選ぶ。</p>
+<div class="stats"><span class="stat"><b>01</b> 希望条件を入力</span><span class="stat"><b>02</b> AIが逆面接</span><span class="stat"><b>03</b> 企業を比較</span></div>
+</div>
+<div class="stage" aria-label="逆面接AIの会話イメージ">
+<div class="stage-top"><b>逆面接AI / 会話プレビュー</b><span class="stage-badge">DEMO MODE</span></div>
+<div class="bubble user">「成長できて、リモート勤務が可能な会社がいい。」</div>
+<div class="bubble company">企業AI（模擬）：「週4日まで在宅勤務が可能です。四半期ごとに開発目標を見直しています。」</div>
+<div class="bubble user">「評価基準は公開されていますか？残業の実態も教えてください。」</div>
+<div class="stage-check">✓ 応募する前に、企業に質問する。</div>
+</div>
+</section>
+<section class="section form-area" aria-labelledby="form-title">
+<div class="section-title"><h2 id="form-title">まず、あなたの希望を聞かせてください。</h2><p>約10秒で体験できます</p></div>
+<div class="panel">
+<form id="preferences">
+<div class="form-grid">
+<div class="field"><label for="job">希望する職種</label><select id="job" name="job"><option value="engineer">AIエンジニア</option><option value="pm">プロジェクトマネージャー</option><option value="sales">法人営業</option><option value="strategy">事業企画</option></select></div>
+<div class="field"><label for="salary">希望年収（万円）</label><input id="salary" name="salary" type="number" inputmode="numeric" min="300" max="3000" step="10" value="800" required></div>
+<div class="field"><label for="priority">最も重視すること</label><select id="priority" name="priority"><option value="remote">リモート・自由な働き方</option><option value="growth">成長・挑戦機会</option><option value="balance">ワークライフバランス</option><option value="salary">年収</option><option value="trust">評価の透明性</option></select></div>
+<div class="field"><label for="stageOfCareer">キャリアの状況</label><select id="stageOfCareer" name="stage"><option>転職を検討中</option><option>情報収集中</option><option>今すぐ転職したい</option><option>まだ迷っている</option></select></div>
+</div>
+<div class="action-row"><button class="primary" type="submit" id="start">AIに企業を逆面接させる →</button><span class="micro">登録不要・料金不要・APIキー不要</span></div>
+</form>
+<p class="notice">このページは<strong>架空の企業データを使った体験型デモ</strong>です。会話は事前に用意した回答から生成し、外部AI APIや実在企業への問い合わせは行いません。採用に関する客観的な適性評価ではありません。</p>
+</div>
+</section>
+<section id="results" class="section hidden" aria-label="逆面接と比較結果" aria-live="polite">
+<div class="section-title"><h2>AIエージェントの逆面接</h2><p id="selectedConditions"></p></div>
+<div class="panel">
+<div class="step-head"><b id="status">逆面接を準備中…</b><span class="micro">SIMULATED INTERVIEW</span></div>
+<div class="progress" aria-hidden="true"><div id="progressValue"></div></div>
+<div id="transcript" class="transcript"></div>
+</div>
+<div id="ranking" class="hidden fade-in">
+<div class="section-title" style="margin-top:34px"><h2>企業比較レポート</h2><p>比較スコアはデモ用の重み付けから計算</p></div>
+<div class="result-grid" id="companies"></div>
+<div class="panel" style="margin-top:18px"><h2 style="font-size:19px;margin:0 0 6px">あなたへの提案</h2><p id="summary" style="color:#cbdaea;line-height:1.8"></p><p class="micro">スコアは仮定の条件による例示です。入社前には職場見学、現場社員との面談、雇用条件の書面確認などを推奨します。</p></div>
+<div class="bottom-actions"><button id="print" class="secondary" type="button">比較レポートを印刷・PDF保存</button><button id="reset" class="secondary" type="button">最初からやり直す</button></div>
+</div>
+</section>
+</main>
+<footer class="footer">逆面接AI — FLEXY AI Hackathon 2026 / Prototype by Yoshioka. このデモでは全企業・全回答が架空です。<br>非公開のイベント配布データ・個人情報・APIキーは含まれていません。</footer>
+</div>
+</body>
+</html>
